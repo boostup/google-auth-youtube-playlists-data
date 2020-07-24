@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import GoogleData from "./components/GoogleData";
-import { useGoogleLogin } from "react-use-googlelogin";
-import { GoogleLoginProvider } from "./components/GoogleLoginProvider";
+import LoginPanel from "./components/LoginPanel";
+import PlaylistsPanel from "./components/PlaylistsPanel";
 
-function App() {
+const App = () => {
   return (
     <>
-      {/* <GoogleLoginProvider> */}
+      <div>{/* <GoogleData /> */}</div>
       <div>
-        <GoogleData />
+        <LoginPanel />
       </div>
-      {/* </GoogleLoginProvider> */}
+      <div>
+        <PlaylistsPanel />
+      </div>
     </>
   );
-}
+};
 
 export default App;
