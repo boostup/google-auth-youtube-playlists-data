@@ -2,10 +2,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
-import {
-  GoogleLoginProvider,
-  useGoogleAuth,
-} from "./providers/GoogleLoginProvider";
+import { GoogleLoginProvider } from "./providers/GoogleLoginProvider";
 
 ReactDOM.render(
   <React.StrictMode>
