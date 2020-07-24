@@ -1,58 +1,58 @@
 // Tutorial https://anthonyjgrove.github.io/react-google-login/?path=/info/google-login-button--default-button
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { GoogleLogin } from "react-google-login";
 
-let loggedIn = false;
-let token = "";
+function GoogleData() {
+  let loggedIn = false;
+  let token = "";
+  const [playlistList, setPlaylistList] = useState([]);
 
-const youtube = axios.create({
-  baseURL: "https://www.googleapis.com/youtube/v3",
-});
-
-const SCOPE = "https://www.googleapis.com/auth/youtube.force-ssl";
-
-const fetchData = async () => {
-  return youtube.get("playlists", {
-    params: {
-      part: "snippet, contentDetails",
-      maxResults: 25,
-      mine: true,
-      key: "AIzaSyCf_JBCgYoPAl2TtTo-gLZ6dyzfhVJ0dno",
-      access_token: token,
-    },
+  const youtube = axios.create({
+    baseURL: process.env.REACT_APP_YOUTUBE_API_URL,
   });
-};
 
-const rootElement = document.getElementById("root");
+  const SCOPE = "https://www.googleapis.com/auth/youtube.force-ssl";
 
-const responseGoogleStatus = (responseType) => {
-  return (response) => {
-    console.log(responseType, response);
-    if (responseType == "Success") {
-      loggedIn = true;
-      token = response.accessToken;
+  const fetchData = async () => {
+    return youtube.get("playlists", {
+      params: {
+        part: "snippet, contentDetails",
+        maxResults: 25,
+        mine: true,
+        key: process.env.REACT_APP_YOUTUBE_API_KEY,
+        access_token: token,
+      },
+    });
+  };
+
+  const retrieveYTData = async () => {
+    console.log("Will retrieve data ?", loggedIn);
+    if (loggedIn === true) {
+      const resp = await fetchData();
+      setPlaylistList(resp.data.items);
     }
   };
-};
 
-const retrieveYTData = async () => {
-  console.log("Will retrieve data ?", loggedIn, token);
-  if (loggedIn === true) {
-    const resp = await fetchData();
-    console.log(resp);
-  }
-};
+  const responseGoogleStatus = (responseType) => {
+    return (response) => {
+      console.log(responseType, response);
+      if (responseType == "Success") {
+        loggedIn = true;
+        token = response.accessToken;
+      }
+    };
+  };
 
-function GoogleData() {
   return (
     <div>
       <GoogleLogin
-        clientId="84629250496-7b7tvvljlfd868bkfu0g59fff52qtff2.apps.googleusercontent.com"
+        clientId={process.env.REACT_APP_GOOGLE_LOGIN_CLIENT_ID}
         buttonText="Login"
         onSuccess={responseGoogleStatus("Success")}
         onFailure={responseGoogleStatus("Failed")}
         cookiePolicy={"single_host_origin"}
+        isSignedIn={true}
         scope={SCOPE}
       />
       <div>
@@ -60,6 +60,7 @@ function GoogleData() {
         <button className="btn" onClick={retrieveYTData}>
           Retrieve playlist data <span className="badge badge-primary"></span>
         </button>
+        <div>{JSON.stringify(playlistList)}</div>
       </div>
     </div>
   );
